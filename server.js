@@ -21,11 +21,38 @@ const morgan = require('morgan');
 const path = require('path');
 
 const app = express();
-
-const dataPath = path.join(__dirname, './index.html');
+app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  res.sendFile(dataPath);
+  try {
+    res.sendFile(path.join(__dirname, './index.html'));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/about', (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, './about.html'));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/sign-up', (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, './sign-up.html'));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Error Handler
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    name: err.name,
+    message: err.message || "An unexpected error occurred on the server.",
+  });
 });
 
 app.listen(3000, () => console.log('Server listening on port 3000...'));
